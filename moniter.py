@@ -1,10 +1,14 @@
-import serial
+import sys
 
-SERIAL_PATH = "/dev/pts/1"
+import serial
 
 
 def main():
-    with serial.Serial(SERIAL_PATH, 115200, timeout=1) as ser:
+    if len(sys.argv) < 2:
+        print(f"Usage: {sys.argv[0]} SERIAL_PATH")
+        return
+    serial_path = sys.argv[1]
+    with serial.Serial(serial_path, 115200, timeout=1) as ser:
         while True:
             b = ser.read(1)
             if b:

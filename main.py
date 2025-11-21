@@ -1,9 +1,8 @@
 import random
+import sys
 import time
 
 import serial
-
-SERIAL_PATH = "/dev/pts/2"
 
 SLIP_END = 0xC0
 SLIP_ESC = 0xDB
@@ -45,7 +44,12 @@ def print_available_tags():
 def main():
     import threading
 
-    threading.Thread(target=sendTask, daemon=True).start()
+    if len(sys.argv) < 2:
+        print(f"Usage: {sys.argv[0]} SERIAL_PATH")
+        return
+    serial_path = sys.argv[1]
+
+    threading.Thread(target=sendTask, args=(serial_path,), daemon=True).start()
     print(f"Tag prefix: {' '.join(f'{b:02X}' for b in tag_prefix).upper()}")
     while True:
         print_available_tags()
@@ -74,8 +78,8 @@ def main():
                 print(f"Unknown command '{u}'")
 
 
-def sendTask():
-    ser = serial.Serial(SERIAL_PATH, 9600, timeout=1)
+def sendTask(serial_path: str):
+    ser = serial.Serial(serial_path, 9600, timeout=1)
     while True:
         raw = bytearray()
         for i, present in enumerate(tag_list):
