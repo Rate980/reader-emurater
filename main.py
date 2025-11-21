@@ -18,7 +18,6 @@ tag_list = [False] * 256
 
 def slip_encode(data: bytes) -> bytes:
     encoded = bytearray()
-    encoded.append(SLIP_END)
     for byte in data:
         if byte == SLIP_END:
             encoded.append(SLIP_ESC)
